@@ -21,6 +21,8 @@ ENTER EQU P3.7
 aktuelleEingabe EQU 30h
 currentNumber EQU 31h
 currentDigitPosition EQU 32h
+number EQU 33h
+basis EQU 34h
 
 	; Start of program
 	mov aktuelleEingabe, #0
@@ -37,6 +39,38 @@ currentDigitPosition EQU 32h
 	mov A, #06h
 	acall COMNWRT
 	mov A, #80h
+	acall COMNWRT
+	mov A, #'Z'
+	acall DATAWRT
+	mov A, #'a'
+	acall DATAWRT
+	mov A, #'h'
+	acall DATAWRT
+	mov A, #'l'
+	acall DATAWRT
+	mov A, #':'
+	acall DATAWRT
+	mov A, #0C0h
+	acall COMNWRT
+	mov A, #'B'
+	acall DATAWRT
+	mov A, #'a'
+	acall DATAWRT
+	mov A, #'s'
+	acall DATAWRT
+	mov A, #'i'
+	acall DATAWRT
+	mov A, #'s'
+	acall DATAWRT
+	mov A, #':'
+	acall DATAWRT
+
+	; Write initial zeros
+	mov A, #0C7h
+	acall COMNWRT
+	mov A, #'0'
+	acall DATAWRT
+	mov A, #87h
 	acall COMNWRT
 	mov A, #'0'
 	acall DATAWRT
@@ -82,7 +116,7 @@ currentDigitPosition EQU 32h
 	
 		; Next digit pressed
 		acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
-		
+
 		mov aktuelleEingabe, #0
 		inc currentDigitPosition
 		mov A, #'0'
@@ -90,9 +124,74 @@ currentDigitPosition EQU 32h
 	sjmp NUMBER_LOOP
 
 	NUMBER_FINISHED:
+	; Release Enter
+	jnb ENTER, NUMBER_FINISHED
+	
 	acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
-	LOOP:
-	sjmp LOOP
+	mov number, currentNumber
+
+	mov currentNumber, #0
+	mov currentDigitPosition, #0
+	mov aktuelleEingabe, #0
+
+	mov A, #0C8h
+	acall COMNWRT
+
+	BASIS_LOOP:
+		DIGIT_LOOP_2:
+			jb INCREMENT, NOT_INCREMENT_2
+				; Increment pressed
+				INC aktuelleEingabe
+				; Überlauf?
+				mov A, aktuelleEingabe
+				cjne A, #10, FORWARD_INCREMENT_2
+					mov aktuelleEingabe, #0
+				FORWARD_INCREMENT_2:
+				; Ausgabe der Ziffer
+				mov A, aktuelleEingabe
+				acall REPLACE_ACTUAL_CHARACTER_2
+				;Warten bis Taster wieder losgelassen
+				RELEASE_INCREMENT_2:
+				jnb INCREMENT, RELEASE_INCREMENT_2
+				
+			NOT_INCREMENT_2:
+			jb DECREMENT, NOT_DECREMENT_2
+				; Decrement pressed
+				DEC aktuelleEingabe
+				; Überlauf?
+				mov A, aktuelleEingabe
+				cjne A, #255, FORWARD_DECREMENT_2
+					mov aktuelleEingabe, #9
+				FORWARD_DECREMENT_2:
+				; Ausgabe der Ziffer
+				mov A, aktuelleEingabe
+				acall REPLACE_ACTUAL_CHARACTER_2
+				;Warten bis Taster wieder losgelassen
+				RELEASE_DECREMENT_2:
+				jnb DECREMENT, RELEASE_DECREMENT_2
+				
+			NOT_DECREMENT_2:
+			jnb ENTER, BASIS_FINISHED
+			jb NEXT_DIGIT, DIGIT_LOOP_2
+		RELEASE_NEXT_DIGIT_2:
+		jnb NEXT_DIGIT, RELEASE_NEXT_DIGIT_2
+	
+		; Next digit pressed
+		acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
+		
+		mov aktuelleEingabe, #0
+		inc currentDigitPosition
+		mov A, #'0'
+		acall DATAWRT
+	sjmp BASIS_LOOP
+
+	BASIS_FINISHED:
+	acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
+	mov basis, currentNumber
+	; Berechung
+	BERECHNUNG:
+		; TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+	sjmp BERECHNUNG
 		
 
 INFINITE_LOOP:
@@ -126,9 +225,19 @@ WAIT_FOR_READY:
 	jb D7, BACK
 	RET
 
-REPLACE_ACTUAL_CHARACTER:   ; Character to write is in A, 0 puts out a 0, no ASCII-Number is needed
+REPLACE_ACTUAL_CHARACTER:	; Character to write is in A, 0 puts out a 0, no ASCII-Number is needed
 	push A
-	mov A, #80h
+	mov A, #87h
+	ADD A, currentDigitPosition
+	acall COMNWRT
+	pop A
+	add A, #30h  ; Offset for ASCII-Character
+	acall DATAWRT
+	ret
+
+REPLACE_ACTUAL_CHARACTER_2:	; Character to write is in A, 0 puts out a 0, no ASCII-Number is needed
+	push A
+	mov A, #0C7h
 	ADD A, currentDigitPosition
 	acall COMNWRT
 	pop A
