@@ -42,28 +42,9 @@ basis EQU 34h
 	acall DATAWRT
 	mov A, #'l'
 	acall DATAWRT
-	mov A, #':'
-	acall DATAWRT
-	mov A, #0C0h
-	acall COMNWRT
-	mov A, #'B'
-	acall DATAWRT
-	mov A, #'a'
-	acall DATAWRT
-	mov A, #'s'
-	acall DATAWRT
-	mov A, #'i'
-	acall DATAWRT
-	mov A, #'s'
-	acall DATAWRT
-	mov A, #':'
-	acall DATAWRT
 
 	; Write initial zeros
-	mov A, #0C7h
-	acall COMNWRT
-	mov A, #'0'
-	acall DATAWRT
+	
 	mov A, #87h
 	acall COMNWRT
 	mov A, #'0'
@@ -120,13 +101,42 @@ basis EQU 34h
 	NUMBER_FINISHED:
 	; Release Enter
 	jnb ENTER, NUMBER_FINISHED
-	
+
 	acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
 	mov number, currentNumber
 
 	mov currentNumber, #0
 	mov currentDigitPosition, #0
 	mov aktuelleEingabe, #0
+
+	;Write GUI Addition
+	mov A, #' '
+	acall DATAWRT
+	mov A, #' '
+	acall DATAWRT
+	mov A, #'M'
+	acall DATAWRT
+	mov A, #'i'
+	acall DATAWRT
+	mov A, #'t'
+	acall DATAWRT
+
+	mov A, #0C0h
+	acall COMNWRT
+	mov A, #'B'
+	acall DATAWRT
+	mov A, #'a'
+	acall DATAWRT
+	mov A, #'s'
+	acall DATAWRT
+	mov A, #'i'
+	acall DATAWRT
+	mov A, #'s'
+	acall DATAWRT
+	mov A, #0C7h
+	acall COMNWRT
+	mov A, #'0'
+	acall DATAWRT
 
 	mov A, #0C8h
 	acall COMNWRT
@@ -185,6 +195,14 @@ basis EQU 34h
 	; Berechung
 
 	mov r0, #40h
+
+	;Adjust GUI visuals for result
+	mov A, #' '
+	acall DATAWRT
+	mov A, #'='
+	acall DATAWRT
+	mov A, #' '
+	acall DATAWRT
 
 	; Ausgabezahl in RAM schreiben (ab Adresse 40h))
 	mov A, number
