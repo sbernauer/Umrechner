@@ -85,6 +85,10 @@ basis EQU 34h
 				
 			NOT_DECREMENT:
 			jnb ENTER, NUMBER_FINISHED
+			; Limit Digits of number to 3
+			mov A, currentDigitPosition
+			anl A, #11111110b
+			cjne A, #0, DIGIT_LOOP
 			jb NEXT_DIGIT, DIGIT_LOOP
 		RELEASE_NEXT_DIGIT:
 		jnb NEXT_DIGIT, RELEASE_NEXT_DIGIT
@@ -176,6 +180,8 @@ basis EQU 34h
 				
 			NOT_DECREMENT_2:
 			jnb ENTER, BASIS_FINISHED
+			mov A,currentDigitPosition
+			cjne A, #0, DIGIT_LOOP_2 ; Limitierung auf zwei Ziffern
 			jb NEXT_DIGIT, DIGIT_LOOP_2
 		RELEASE_NEXT_DIGIT_2:
 		jnb NEXT_DIGIT, RELEASE_NEXT_DIGIT_2
