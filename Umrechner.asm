@@ -5,13 +5,6 @@ RS EQU	P2.0
 RW EQU	P2.1
 E EQU	P2.2
 D7 EQU	P1.7
-D6 EQU	P1.6
-D5 EQU	P1.5
-D4 EQU	P1.4
-D3 EQU	P1.3
-D2 EQU	P1.2
-D1 EQU	P1.2
-D0 EQU	P1.0
 
 INCREMENT EQU P3.0
 DECREMENT EQU P3.1
@@ -25,6 +18,7 @@ number EQU 33h
 basis EQU 34h
 
 	; Start of program
+	
 	mov aktuelleEingabe, #0
 	mov currentNumber, #0
 	mov currentDigitPosition, #0
@@ -189,10 +183,38 @@ basis EQU 34h
 	acall ADD_CURRENT_EINGABE_TO_CURRENT_NUMBER
 	mov basis, currentNumber
 	; Berechung
+
+	mov r0, #40h
+
+	; Ausgabezahl in RAM schreiben (ab Adresse 40h))
+	mov A, number
+	mov B, basis
+	BER:
+	div AB
+	push A
+	mov @R0, B
+	inc R0
+	pop A
+	mov B, basis
+	cjne A, #0, BER
+
+	;Ausgabezahl aus RAM rückwärts ausgeben
+	OUTPUT_LOOP:
+	dec R0
+	mov A, @R0
+
+	cjne A, #10, FOO
+	FOO:
+	jb C, NO_OFFSET_NEEDED
+	add A, #7 ; Offset, so that the caracter 'A' is after the '9'
+	NO_OFFSET_NEEDED:
+	
+	add A, #30h  ; Offset for ASCII-Character
+	acall DATAWRT
+	cjne R0, #40h, OUTPUT_LOOP
+	
 	BERECHNUNG:
-		; TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 	sjmp BERECHNUNG
-		
 
 INFINITE_LOOP:
 	sjmp INFINITE_LOOP
