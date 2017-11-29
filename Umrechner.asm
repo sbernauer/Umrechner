@@ -166,6 +166,8 @@ basis EQU 34h
 				
 			NOT_DECREMENT_2:
 			jnb ENTER, BASIS_FINISHED
+			mov A,currentDigitPosition
+			cjne A, #0, DIGIT_LOOP_2 ;Limitierung auf zwei Ziffern
 			jb NEXT_DIGIT, DIGIT_LOOP_2
 		RELEASE_NEXT_DIGIT_2:
 		jnb NEXT_DIGIT, RELEASE_NEXT_DIGIT_2
