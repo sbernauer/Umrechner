@@ -45,7 +45,7 @@ basis EQU 34h
 
 	; Write initial zeros
 	
-	mov A, #87h
+	mov A, #86h
 	acall COMNWRT
 	mov A, #'0'
 	acall DATAWRT
@@ -116,13 +116,11 @@ basis EQU 34h
 	;Write GUI Addition
 	mov A, #' '
 	acall DATAWRT
-	mov A, #' '
+	mov A, #'z'
 	acall DATAWRT
-	mov A, #'M'
+	mov A, #'u'
 	acall DATAWRT
-	mov A, #'i'
-	acall DATAWRT
-	mov A, #'t'
+	mov A, #'r'
 	acall DATAWRT
 
 	mov A, #0C0h
@@ -137,12 +135,12 @@ basis EQU 34h
 	acall DATAWRT
 	mov A, #'s'
 	acall DATAWRT
-	mov A, #0C7h
+	mov A, #0C6h
 	acall COMNWRT
 	mov A, #'0'
 	acall DATAWRT
 
-	mov A, #0C8h
+	mov A, #0C7h
 	acall COMNWRT
 
 	BASIS_LOOP:
@@ -273,7 +271,7 @@ WAIT_FOR_READY:
 
 REPLACE_ACTUAL_CHARACTER:	; Character to write is in A, 0 puts out a 0, no ASCII-Number is needed
 	push A
-	mov A, #87h
+	mov A, #86h
 	ADD A, currentDigitPosition
 	acall COMNWRT
 	pop A
@@ -283,7 +281,7 @@ REPLACE_ACTUAL_CHARACTER:	; Character to write is in A, 0 puts out a 0, no ASCII
 
 REPLACE_ACTUAL_CHARACTER_2:	; Character to write is in A, 0 puts out a 0, no ASCII-Number is needed
 	push A
-	mov A, #0C7h
+	mov A, #0C6h
 	ADD A, currentDigitPosition
 	acall COMNWRT
 	pop A
