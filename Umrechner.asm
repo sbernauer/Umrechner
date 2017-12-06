@@ -198,8 +198,6 @@ basis EQU 34h
 	mov basis, currentNumber
 	; Berechung
 
-	mov r0, #40h
-
 	;Adjust GUI visuals for result
 	mov A, #' '
 	acall DATAWRT
@@ -209,6 +207,7 @@ basis EQU 34h
 	acall DATAWRT
 
 	; Ausgabezahl in RAM schreiben (ab Adresse 40h))
+	mov r0, #40h
 	mov A, number
 	mov B, basis
 	BER:
