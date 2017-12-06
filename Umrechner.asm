@@ -213,10 +213,8 @@ basis EQU 34h
 	mov B, basis
 	BER:
 	div AB
-	push A
 	mov @R0, B
 	inc R0
-	pop A
 	mov B, basis
 	cjne A, #0, BER
 
